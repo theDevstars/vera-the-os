@@ -1,7 +1,7 @@
 #!/bin/sh
 # Run as root on Debian/Ubuntu with: apt install live-build
 set -e
-chmod +x auto/config config/hooks/live/*.chroot
+chmod +x auto/config config/hooks/live/*.chroot config/includes.chroot/usr/local/bin/vera-*
 lb clean --purge || true
 lb config
 lb build
