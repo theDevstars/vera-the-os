@@ -1,0 +1,12 @@
+name: Build Vera OS ISO
+on: [push, workflow_dispatch]
+jobs:
+  iso:
+    runs-on: ubuntu-latest
+    container: {image: "debian:trixie", options: "--privileged"}
+    steps:
+      - run: apt-get update && apt-get install -y live-build curl jq git xz-utils
+      - uses: actions/checkout@v4
+      - run: sh build.sh
+      - uses: actions/upload-artifact@v4
+        with: {name: VeraOS, path: "VeraOS.iso*"}
