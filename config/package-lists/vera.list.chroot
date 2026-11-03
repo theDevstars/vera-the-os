@@ -1,0 +1,6 @@
+task-kde-desktop plasma-workspace-wayland sddm calamares calamares-settings-debian
+plasma-nm bluedevil plasma-pa pipewire-audio plasma-discover plasma-systemmonitor
+dolphin konsole kcalc kate kwrite merkuro gwenview elisa spectacle okular
+python3 python3-pyside6.qtwidgets libfuse2t64 curl jq ca-certificates libnotify-bin
+firmware-linux firmware-iwlwifi firmware-realtek firmware-atheros firmware-misc-nonfree
+xdg-user-dirs grub-efi-amd64 grub-pc-bin

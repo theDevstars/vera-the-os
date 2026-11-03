@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+import json,sys,datetime,subprocess
+v=json.load(open("/usr/share/vera-bible/KJV.json")); k=sorted(v)
+ref=k[datetime.date.today().toordinal()%len(k)]
+if "--notify" in sys.argv: subprocess.run(["notify-send","-a","Vera Bible",ref,v[ref]])
+else: print(ref+"\n"+v[ref])

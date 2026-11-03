@@ -1,0 +1,12 @@
+#!/bin/sh
+# Helium (https://github.com/imputnet/helium); Linux builds come from imputnet/helium-linux releases.
+set -e
+API=https://api.github.com/repos/imputnet/helium-linux/releases/latest
+URL=$(curl -fsSL "$API" | jq -r '[.assets[].browser_download_url | select(test("x86_64.*AppImage$"))][0]')
+[ -n "$URL" ] && [ "$URL" != null ] || { echo "No official Helium x86_64 AppImage found - check asset names"; exit 1; }
+mkdir -p /opt/helium /usr/share/doc/helium && cd /opt/helium
+curl -fsSL "$URL" -o helium.AppImage && chmod +x helium.AppImage
+./helium.AppImage --appimage-extract >/dev/null && cp -r squashfs-root/* . && rm -rf squashfs-root helium.AppImage
+cp -f LICENSE* COPYING* /usr/share/doc/helium/ 2>/dev/null || true
+echo "Source: https://github.com/imputnet/helium" > /usr/share/doc/helium/SOURCE
+ln -sf /opt/helium/AppRun /usr/local/bin/helium

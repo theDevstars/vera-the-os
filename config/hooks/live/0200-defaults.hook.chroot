@@ -1,0 +1,25 @@
+#!/bin/sh
+set -e
+mkdir -p /etc/skel/Desktop /etc/skel/Downloads
+cp /usr/share/applications/helium.desktop /etc/skel/Desktop/ && chmod +x /etc/skel/Desktop/helium.desktop
+cat > /etc/skel/.config/mimeapps.list <<M
+[Default Applications]
+x-scheme-handler/http=helium.desktop
+x-scheme-handler/https=helium.desktop
+text/html=helium.desktop
+M
+cat > /etc/skel/.config/kwinrc <<M
+[org.kde.kdecoration2]
+ButtonsOnLeft=XIA
+ButtonsOnRight=
+[Plugins]
+blurEnabled=true
+overviewEnabled=true
+M
+cat > /etc/skel/.config/kdeglobals <<M
+[General]
+ColorScheme=BreezeDark
+[KDE]
+LookAndFeelPackage=org.kde.breezedark.desktop
+AnimationDurationFactor=0.7
+M

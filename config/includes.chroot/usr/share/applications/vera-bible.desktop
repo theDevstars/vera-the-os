@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Bible
+Exec=/usr/local/bin/vera-bible
+Icon=accessories-dictionary
+Categories=Education;

@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+import sys,json,glob,os,datetime
+from PySide6.QtWidgets import *
+from PySide6.QtGui import QGuiApplication
+H=os.path.expanduser("~/.local/share/vera-bible"); os.makedirs(H,exist_ok=True)
+def load(p,d):
+    try: return json.load(open(p))
+    except Exception: return d
+T={}
+for p in glob.glob("/usr/share/vera-bible/*.json")+glob.glob(H+"/translations/*.json"): T[os.path.basename(p)[:-5]]=load(p,{})
+BM=H+"/bookmarks.json"; PJ=H+"/prayers.json"
+app=QApplication(sys.argv); w=QTabWidget(); w.setWindowTitle("Bible"); w.resize(620,480)
+r=QWidget(); L=QVBoxLayout(r); top=QHBoxLayout(); tr=QComboBox(); tr.addItems(sorted(T)); q=QLineEdit(); q.setPlaceholderText("Search verses")
+top.addWidget(tr); top.addWidget(q); L.addLayout(top); lst=QListWidget(); L.addWidget(lst)
+bb=QHBoxLayout(); b1=QPushButton("Bookmark"); b2=QPushButton("Copy to share"); bb.addWidget(b1); bb.addWidget(b2); L.addLayout(bb)
+def fill():
+    lst.clear(); s=q.text().lower(); t=T.get(tr.currentText(),{})
+    for k,x in t.items():
+        if s in k.lower() or s in x.lower(): lst.addItem(k+" - "+x)
+tr.currentTextChanged.connect(fill); q.textChanged.connect(fill); fill()
+def bm():
+    i=lst.currentItem()
+    if i: b=load(BM,[]); b.append(i.text()); json.dump(b,open(BM,"w"))
+def sh():
+    i=lst.currentItem()
+    if i: QGuiApplication.clipboard().setText(i.text()+" ("+tr.currentText()+")")
+b1.clicked.connect(bm); b2.clicked.connect(sh); w.addTab(r,"Read")
+bk=QListWidget(); bt=QPushButton("Refresh"); bw=QWidget(); QVBoxLayout(bw).addWidget(bk); bw.layout().addWidget(bt)
+bt.clicked.connect(lambda:(bk.clear(),bk.addItems(load(BM,[])))); bt.click(); w.addTab(bw,"Saved")
+k=sorted(T.get("KJV",{})); ref=k[datetime.date.today().toordinal()%len(k)] if k else ""
+dv=QTextEdit(); dv.setReadOnly(True); dv.setPlainText("Today's reading: "+ref+"\n\n"+T.get("KJV",{}).get(ref,"")+"\n\nReflect: What is this verse asking of you today?"); w.addTab(dv,"Devotional")
+pj=QTextEdit(); pj.setPlainText("\n".join(load(PJ,[]))); ps=QPushButton("Save entry (stored locally)")
+def sv(): json.dump(pj.toPlainText().split("\n"),open(PJ,"w"))
+ps.clicked.connect(sv); pw=QWidget(); QVBoxLayout(pw).addWidget(pj); pw.layout().addWidget(ps); w.addTab(pw,"Prayer journal")
+w.show(); sys.exit(app.exec())
